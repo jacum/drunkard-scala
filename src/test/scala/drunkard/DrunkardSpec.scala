@@ -18,6 +18,13 @@ class DrunkardSpec extends AnyFlatSpec with Matchers {
     king > seven shouldBe (true)
   }
 
+  "Deal" should "split the shuffle" in {
+
+    val shuffle = Shuffle.shuffle
+    val hands = Drunkard(shuffle).deal
+    hands.hand1.length shouldEqual hands.hand2.length
+  }
+
   "Same shuffle" should "give the same result" in {
 
     for (_ <- 1 to 100) {

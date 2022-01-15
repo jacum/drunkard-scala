@@ -8,11 +8,10 @@ case class Hands(
 case class GameState(
   hands: Hands,
   contested: Set[Card] = Set.empty,
-  seen: Set[Hands] = Set.empty,
   step: Int = 0
 ) {
   override def toString: String =
-    s"${step}: ${hands.hand1.mkString(" ")} | ${hands.hand2.mkString(" ")} (${contested.mkString(" ")}) "
+    s"${step}: ${hands.hand1.reverse.mkString(" ")}   --[${contested.mkString(" ")}]--   ${hands.hand2.mkString(" ")}  "
 }
 
 case class Drunkard(shuffle: List[Card]) {
@@ -25,11 +24,9 @@ case class Drunkard(shuffle: List[Card]) {
   }
 
   def play(state: GameState, logging: Boolean): (String, GameState) = {
-    if (state.hands.hand1.isEmpty) (s"Hand2 won at step ${ state.step }", state)
-    else if (state.hands.hand2.isEmpty) (s"Hand1 won at step ${ state.step }", state)
-    else if (state.seen.contains(state.hands)) (s"Hands repeated, game resolved as a tie", state)
+    if (state.hands.hand1.isEmpty) (s"Hand2 won", state)
+    else if (state.hands.hand2.isEmpty) (s"Hand1 won", state)
     else {
-      val seen = state.seen + state.hands
       val nextStep = state.step + 1
       val (hand1, hand2) = (state.hands.hand1, state.hands.hand2)
       val (topCard1, topCard2) = (hand1.head, hand2.head)
@@ -43,7 +40,6 @@ case class Drunkard(shuffle: List[Card]) {
               hand2 = hand2.tail ++ List(topCard2, topCard1) ++ state.contested,
             ),
             contested = Set.empty,
-            seen = seen,
             step = nextStep
           )
         } else if (topCard1 > topCard2) {
@@ -53,7 +49,6 @@ case class Drunkard(shuffle: List[Card]) {
               hand2 = hand2.tail
             ),
             contested = Set.empty,
-            seen = seen,
             step = nextStep
           )
         } else {
@@ -63,7 +58,6 @@ case class Drunkard(shuffle: List[Card]) {
               hand2 = hand2.tail
             ),
             contested = (state.contested + topCard1) + topCard2,
-            seen = seen,
             step = nextStep
           )
         }
