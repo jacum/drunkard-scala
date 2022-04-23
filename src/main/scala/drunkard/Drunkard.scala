@@ -7,7 +7,7 @@ case class Hands(
 
 case class GameState(
   hands: Hands,
-  contested: Set[Card] = Set.empty,
+  contested: List[Card] = List.empty,
   step: Int = 0
 ) {
   override def toString: String =
@@ -37,18 +37,18 @@ case class Drunkard(shuffle: List[Card]) {
           GameState(
             hands = Hands(
               hand1 = hand1.tail,
-              hand2 = hand2.tail ++ List(topCard2, topCard1) ++ state.contested,
+              hand2 = hand2.tail ::: List(topCard2, topCard1) ::: state.contested,
             ),
-            contested = Set.empty,
+            contested = List.empty,
             step = nextStep
           )
         } else if (topCard1 > topCard2) {
           GameState(
             hands = Hands(
-              hand1 = hand1.tail ++ List(topCard1, topCard2) ++ state.contested,
+              hand1 = hand1.tail ::: List(topCard1, topCard2) ::: state.contested,
               hand2 = hand2.tail
             ),
-            contested = Set.empty,
+            contested = List.empty,
             step = nextStep
           )
         } else {
@@ -57,7 +57,7 @@ case class Drunkard(shuffle: List[Card]) {
               hand1 = hand1.tail,
               hand2 = hand2.tail
             ),
-            contested = (state.contested + topCard1) + topCard2,
+            contested = topCard1 :: (topCard2 :: state.contested),
             step = nextStep
           )
         }
