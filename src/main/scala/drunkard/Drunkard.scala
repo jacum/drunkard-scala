@@ -57,7 +57,7 @@ case class Drunkard(shuffle: List[Card]) {
               hand1 = hand1.tail,
               hand2 = hand2.tail
             ),
-            contested = topCard1 :: (topCard2 :: state.contested),
+            contested = List(topCard1, topCard2) ::: state.contested,
             step = nextStep
           )
         }
